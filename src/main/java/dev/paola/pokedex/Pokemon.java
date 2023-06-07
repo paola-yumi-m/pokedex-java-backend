@@ -9,18 +9,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "pokemons")
+@Document(collection = "few-pokemons")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Pokemon {
     @Id
     private ObjectId id;
-//    private List<PokemonAbility> abilities;
+    private List<PokemonAbility> abilities;
     private int height;
     private String name;
     private int weight;
-//    private List<PokemonType> types;
+    private List<PokemonType> types;
 
-//    private List<Sprite> sprites;
+    private Sprite sprites;
 }

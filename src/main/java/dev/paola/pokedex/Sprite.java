@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Sprite {
-    private String frontDefault;
+    private String front_default;
 }
