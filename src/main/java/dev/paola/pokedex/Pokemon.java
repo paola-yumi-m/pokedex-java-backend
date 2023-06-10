@@ -16,6 +16,7 @@ import java.util.List;
 public class Pokemon {
     @Id
     private ObjectId id;
+    private int pokemonId;
     private List<PokemonAbility> abilities;
     private int height;
     private String name;
