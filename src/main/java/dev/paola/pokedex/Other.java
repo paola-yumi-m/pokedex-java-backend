@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Sprite {
-    private Other other;
+public class Other {
+    private Home home;
 }
