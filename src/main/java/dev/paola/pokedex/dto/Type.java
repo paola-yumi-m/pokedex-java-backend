@@ -1,4 +1,4 @@
-package dev.paola.pokedex;
+package dev.paola.pokedex.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

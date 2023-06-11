@@ -1,4 +1,4 @@
-package dev.paola.pokedex;
+package dev.paola.pokedex.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +22,5 @@ public class Pokemon {
     private String name;
     private int weight;
     private List<PokemonType> types;
-
     private Sprite sprites;
 }

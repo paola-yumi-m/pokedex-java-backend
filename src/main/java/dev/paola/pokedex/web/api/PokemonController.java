@@ -1,5 +1,8 @@
-package dev.paola.pokedex;
+package dev.paola.pokedex.web.api;
 
+import dev.paola.pokedex.service.PokemonService;
+import dev.paola.pokedex.dto.Pokemon;
+import dev.paola.pokedex.exception.PokemonNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +26,14 @@ public class PokemonController {
 
     @GetMapping("/{pokemonId}")
     public ResponseEntity<Optional<Pokemon>> getPokemonById(@PathVariable int pokemonId) {
-        return new ResponseEntity<>(pokemonService.getPokemonById(pokemonId), HttpStatus.OK);
+        Optional<Pokemon> pokemon = pokemonService.getPokemonById(pokemonId);
+
+        return new ResponseEntity<>(pokemon, HttpStatus.OK);
     }
 
+    @ExceptionHandler(PokemonNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handlePokemonNotFoundException(PokemonNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
 }
