@@ -26,9 +26,7 @@ public class PokemonController {
 
     @GetMapping("/{pokemonId}")
     public ResponseEntity<Optional<Pokemon>> getPokemonById(@PathVariable int pokemonId) {
-        Optional<Pokemon> pokemon = pokemonService.getPokemonById(pokemonId);
-
-        return new ResponseEntity<>(pokemon, HttpStatus.OK);
+        return new ResponseEntity<>(pokemonService.getPokemonById(pokemonId), HttpStatus.OK);
     }
 
     @ExceptionHandler(PokemonNotFoundException.class)
