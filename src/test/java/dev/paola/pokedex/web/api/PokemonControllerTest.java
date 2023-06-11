@@ -1,15 +1,13 @@
-package dev.paola.pokedex;
+package dev.paola.pokedex.web.api;
 
 import dev.paola.pokedex.dto.Pokemon;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.PokemonService;
-import dev.paola.pokedex.web.api.PokemonController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,7 +22,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureMockMvc
 @SpringBootTest
 public class PokemonControllerTest {
 
@@ -42,8 +39,8 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void deve_retornar_200_quando_obter_todos_os_pokemons() throws Exception {
-        when(pokemonService.getAllPokemons()).thenReturn(List.of(aPokemonWith(1), aPokemonWith(2)));
+    public void should_return_200_when_retrieves_all_pokemons() throws Exception {
+        when(pokemonService.getAllPokemons()).thenReturn(List.of(aPokemonWithId(1), aPokemonWithId(2)));
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS));
 
@@ -54,8 +51,8 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void deve_retornar_200_quando_obter_pokemon_por_id() throws Exception {
-        when(pokemonService.getPokemonById(1)).thenReturn(Optional.of(aPokemonWith(1)));
+    public void should_return_200_when_retrieves_the_pokemon_by_its_id() throws Exception {
+        when(pokemonService.getPokemonById(1)).thenReturn(Optional.of(aPokemonWithId(1)));
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS + "/1"));
 
@@ -64,7 +61,7 @@ public class PokemonControllerTest {
     }
 
     @Test
-    public void deve_retornar_404_quando_nao_encontrar_o_id_do_pokemon() throws Exception {
+    public void should_return_404_when_pokemon_not_found() throws Exception {
         doThrow(new PokemonNotFoundException()).when(pokemonService).getPokemonById(1000);
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS + "/1000"));
@@ -73,7 +70,7 @@ public class PokemonControllerTest {
         result.andExpect(content().string("Pokémon not found!"));
     }
 
-    private Pokemon aPokemonWith(int pokemonId) {
+    private Pokemon aPokemonWithId(int pokemonId) {
         Pokemon pokemon = new Pokemon();
         pokemon.setPokemonId(pokemonId);
         return pokemon;
