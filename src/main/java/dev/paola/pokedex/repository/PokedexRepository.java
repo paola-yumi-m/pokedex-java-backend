@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PokedexRepository extends MongoRepository<Pokedex, ObjectId> {
-    Pokedex findPokemonById(int pokemonId);
+    Pokedex findByPokemonId(int pokemonId);
 }

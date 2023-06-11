@@ -39,7 +39,7 @@ public class PokedexService {
     }
 
     private void validateIfPokemonIsAlreadyRegistered(int pokemonId) {
-        Pokedex pokedexPokemon = pokedexRepository.findPokemonById(pokemonId);
+        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
         if (nonNull(pokedexPokemon)) {
             throw new PokemonAlreadyRegisteredException();
         }
