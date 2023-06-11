@@ -26,8 +26,8 @@ class PokemonServiceTest {
     }
 
     @Test
-    public void deve_retornar_uma_lista_de_pokemons() {
-        when(pokemonRepository.findAll()).thenReturn(List.of(aPokemonWith(1), aPokemonWith(2)));
+    public void should_return_a_list_of_pokemons() {
+        when(pokemonRepository.findAll()).thenReturn(List.of(aPokemonWithId(1), aPokemonWithId(2)));
 
         List<Pokemon> pokemons = pokemonService.getAllPokemons();
 
@@ -37,8 +37,8 @@ class PokemonServiceTest {
     }
 
     @Test
-    public void deve_retornar_um_pokemon_pelo_seu_id() {
-        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWith(1)));
+    public void should_return_a_pokemon_by_its_id() {
+        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWithId(1)));
 
         Optional<Pokemon> pokemon = pokemonService.getPokemonById(1);
 
@@ -47,13 +47,13 @@ class PokemonServiceTest {
     }
 
     @Test
-    public void deve_lancar_excecao_quando_nao_encontrar_o_pokemon() {
+    public void should_throw_an_exception_when_pokemon_is_not_found() {
         PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokemonService.getPokemonById(1000));
 
         assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
 
-    private Pokemon aPokemonWith(int pokemonId) {
+    private Pokemon aPokemonWithId(int pokemonId) {
         Pokemon pokemon = new Pokemon();
         pokemon.setPokemonId(pokemonId);
         return pokemon;

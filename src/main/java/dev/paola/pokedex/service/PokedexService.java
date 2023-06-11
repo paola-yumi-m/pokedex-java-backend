@@ -6,7 +6,6 @@ import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokedexRepository;
 import dev.paola.pokedex.repository.PokemonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,10 +15,14 @@ import static java.util.Objects.nonNull;
 
 @Service
 public class PokedexService {
-    @Autowired
-    private PokedexRepository pokedexRepository;
-    @Autowired
-    private PokemonRepository pokemonRepository;
+
+    private final PokedexRepository pokedexRepository;
+    private final PokemonRepository pokemonRepository;
+
+    public PokedexService(PokedexRepository pokedexRepository, PokemonRepository pokemonRepository) {
+        this.pokedexRepository = pokedexRepository;
+        this.pokemonRepository = pokemonRepository;
+    }
 
     public List<Pokedex> findAll() {
         return pokedexRepository.findAll();
