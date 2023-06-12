@@ -17,10 +17,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
@@ -79,6 +77,25 @@ class PokedexControllerTest {
 
         result.andExpect(status().isUnprocessableEntity());
         result.andExpect(content().string("This pokémon is already in your pokédex!"));
+    }
+
+    @Test
+    public void should_return_200_when_pokemon_is_successfully_deleted_from_pokedex() throws Exception {
+        doNothing().when(pokedexService).deletePokemonBy(1);
+
+        ResultActions result = mockMvc.perform(delete(URL_POKEDEX + "/1"));
+
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_return_404_when_pokemon_to_be_deleted_is_not_found_in_pokedex() throws Exception {
+        doThrow(new PokemonNotFoundException()).when(pokedexService).deletePokemonBy(1);
+
+        ResultActions result = mockMvc.perform(delete(URL_POKEDEX + "/1"));
+
+        result.andExpect(status().isNotFound());
+        result.andExpect(content().string("Pokémon not found!"));
     }
 
     private Pokedex aPokedexWithId(int pokemonId) {

@@ -44,4 +44,9 @@ public class PokedexService {
             throw new PokemonAlreadyRegisteredException();
         }
     }
+
+    public void deletePokemonBy(Integer pokemonId) {
+        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
+        pokedexRepository.delete(pokedexPokemon);
+    }
 }

@@ -30,6 +30,11 @@ public class PokedexController {
         return new ResponseEntity<>(pokedexService.addPokemon(payload.get("pokemonId")), HttpStatus.CREATED);
     }
 
+    @DeleteMapping("/{pokemonId}")
+    public void deletePokemon(@PathVariable Integer pokemonId) {
+        pokedexService.deletePokemonBy(pokemonId);
+    }
+
     @ExceptionHandler(PokemonNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handlePokemonNotFoundException(PokemonNotFoundException exception) {

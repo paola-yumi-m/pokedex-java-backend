@@ -49,7 +49,7 @@ class PokedexServiceTest {
         Pokedex pokedex = pokedexService.addPokemon(1);
 
         assertThat(pokedex.getPokemonId(), is(1));
-        verify(pokedexRepository).findPokemonById(1);
+        verify(pokedexRepository).findByPokemonId(1);
         verify(pokedexRepository).insert(new Pokedex(pokemon));
     }
 
@@ -63,7 +63,7 @@ class PokedexServiceTest {
     @Test
     public void should_throw_an_exception_when_pokemon_is_already_registered_in_pokedex() {
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWithId(1)));
-        when(pokedexRepository.findPokemonById(1)).thenReturn(aPokedexPokemonWith(1));
+        when(pokedexRepository.findByPokemonId(1)).thenReturn(aPokedexPokemonWith(1));
 
         PokemonAlreadyRegisteredException exception = assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(1));
 
