@@ -76,7 +76,7 @@ class PokedexControllerTest {
         ResultActions result = mockMvc.perform(post(URL_POKEDEX).contentType(MediaType.APPLICATION_JSON).content("{\"pokemonId\": 1}"));
 
         result.andExpect(status().isUnprocessableEntity());
-        result.andExpect(content().string("This pokémon is already in your pokédex!"));
+        result.andExpect(content().string("This pokémon is already registered here!"));
     }
 
     @Test

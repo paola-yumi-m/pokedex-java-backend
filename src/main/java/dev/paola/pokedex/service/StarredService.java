@@ -10,4 +10,16 @@ public class StarredService {
     public List<StarredPokemon> getAllStarredPokemons() {
         return null;
     }
+
+    public StarredPokemon getStarredPokemonById(Integer pokemonId) {
+        return null;
+    }
+
+    public StarredPokemon addPokemonBy(Integer pokemonId) {
+        return null;
+    }
+
+    public void deletePokemonBy(Integer pokemonId) {
+
+    }
 }

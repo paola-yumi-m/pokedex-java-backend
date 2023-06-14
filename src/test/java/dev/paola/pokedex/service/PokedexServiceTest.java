@@ -67,7 +67,7 @@ class PokedexServiceTest {
 
         PokemonAlreadyRegisteredException exception = assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(1));
 
-        assertThat(exception.getMessage(), is("This pokémon is already in your pokédex!"));
+        assertThat(exception.getMessage(), is("This pokémon is already registered here!"));
     }
 
     private Pokemon aPokemonWithId(int pokemonId) {
