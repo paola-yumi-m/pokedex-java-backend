@@ -40,6 +40,11 @@ public class StarredController {
         return new ResponseEntity<>("Pokémon deleted from your starred pokémons!", HttpStatus.OK);
     }
 
+    @PatchMapping("/{pokemonId}")
+    public ResponseEntity<StarredPokemon> editNicknameOf(@PathVariable Integer pokemonId, @RequestBody Map<String, String> payload) {
+        return new ResponseEntity<>(starredService.editNicknameOf(pokemonId, payload.get("nickname")), HttpStatus.OK);
+    }
+
     @ExceptionHandler(PokemonNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handlePokemonNotFoundException(PokemonNotFoundException exception) {

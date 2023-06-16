@@ -22,4 +22,8 @@ public class StarredService {
     public void deletePokemonBy(Integer pokemonId) {
 
     }
+
+    public StarredPokemon editNicknameOf(Integer pokemonId, String nickname) {
+        return null;
+    }
 }
