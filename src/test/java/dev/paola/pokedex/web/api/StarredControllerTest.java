@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 class StarredControllerTest {
     public static final String URL_STARRED = "http://localhost:8080/api/v1/starred";
-    public static final String JSON_POKEMON_ID_1 = "{\"pokemonId\": 1}";
+    public static final String JSON_POKEMON_ID_1_WITH_NICKNAME_PURPLE = "{\"pokemonId\": \"1\", \"nickname\": \"Purple\"}";
     public static final String JSON_NICKNAME_PURPLE = "{\"nickname\": \"Purple\"}";
     public static final String ERROR_MESSAGE_POKEMON_NOT_FOUND = "Pokémon not found!";
     @InjectMocks
@@ -74,9 +74,9 @@ class StarredControllerTest {
 
     @Test
     public void should_return_201_when_adding_new_favorite_pokemon_successfully() throws Exception {
-        when(starredService.addPokemonBy(1)).thenReturn(aStarredPokemonWith(1, "Purple"));
+        when(starredService.addPokemonBy(1, "Purple")).thenReturn(aStarredPokemonWith(1, "Purple"));
 
-        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1));
+        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1_WITH_NICKNAME_PURPLE));
 
         result.andExpect(status().isCreated());
         result.andExpect(jsonPath("$.pokemonId", is(1)));
@@ -84,9 +84,9 @@ class StarredControllerTest {
 
     @Test
     public void should_return_404_when_pokemon_to_add_to_favorites_does_not_exist() throws Exception {
-        doThrow(new PokemonNotFoundException()).when(starredService).addPokemonBy(1);
+        doThrow(new PokemonNotFoundException()).when(starredService).addPokemonBy(1, "Purple");
 
-        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1));
+        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1_WITH_NICKNAME_PURPLE));
 
         result.andExpect(status().isNotFound());
         result.andExpect(content().string(ERROR_MESSAGE_POKEMON_NOT_FOUND));
@@ -94,9 +94,9 @@ class StarredControllerTest {
 
     @Test
     public void should_return_422_when_pokemon_is_already_in_favorite_pokemons() throws Exception {
-        doThrow(new PokemonAlreadyRegisteredException()).when(starredService).addPokemonBy(1);
+        doThrow(new PokemonAlreadyRegisteredException()).when(starredService).addPokemonBy(1, "Purple");
 
-        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1));
+        ResultActions result = mockMvc.perform(post(URL_STARRED).contentType(MediaType.APPLICATION_JSON).content(JSON_POKEMON_ID_1_WITH_NICKNAME_PURPLE));
 
         result.andExpect(status().isUnprocessableEntity());
         result.andExpect(content().string("This pokémon is already registered here!"));

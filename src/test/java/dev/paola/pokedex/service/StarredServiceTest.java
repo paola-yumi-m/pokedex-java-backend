@@ -1,16 +1,19 @@
 package dev.paola.pokedex.service;
 
+import dev.paola.pokedex.dto.Pokemon;
 import dev.paola.pokedex.dto.StarredPokemon;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
+import dev.paola.pokedex.repository.PokemonRepository;
 import dev.paola.pokedex.repository.StarredRepository;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
 class StarredServiceTest {
@@ -18,11 +21,14 @@ class StarredServiceTest {
     private StarredService starredService;
     private StarredRepository starredRepository;
 
+    private PokemonRepository pokemonRepository;
+
 
     @BeforeEach
     public void setup() {
         starredRepository = mock(StarredRepository.class);
-        starredService = new StarredService(starredRepository);
+        pokemonRepository = mock(PokemonRepository.class);
+        starredService = new StarredService(starredRepository, pokemonRepository);
     }
     @Test
     public void should_return_a_list_of_starred_pokemons() {
@@ -52,11 +58,30 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_starred_pokemon_is_not_found() {
-        doThrow(new PokemonNotFoundException()).when(starredRepository).findByPokemonId(1);
+        when(starredRepository.findByPokemonId(1)).thenReturn(null);
 
-        PokemonNotFoundException exception = Assert.assertThrows(PokemonNotFoundException.class, () -> starredService.getStarredPokemonById(1));
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.getStarredPokemonById(1));
 
         assertThat(exception.getMessage(), is(ERROR_MESSAGE_POKEMON_NOT_FOUND));
+    }
+
+    @Test
+    public void should_add_pokemon_to_starred_pokemons() {
+        Pokemon pokemon = new Pokemon();
+        pokemon.setPokemonId(1);
+        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(pokemon));
+        when(starredRepository.insert(aStarredPokemonWith(1, "Red"))).thenReturn(aStarredPokemonWith(1, "Red"));
+
+        StarredPokemon starredPokemon = starredService.addPokemonBy(1, "Red");
+
+        verify(pokemonRepository).findByPokemonId(1);
+        verify(starredRepository).insert(aStarredPokemonWith(1, "Red"));
+        assertThat(starredPokemon.getPokemonId(), is(1));
+    }
+
+    @Test
+    public void should_throw_an_exception_when_pokemon_to_add_to_starred_does_not_exist() {
+
     }
 
 

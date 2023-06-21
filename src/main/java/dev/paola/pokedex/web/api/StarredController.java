@@ -30,8 +30,8 @@ public class StarredController {
     }
 
     @PostMapping
-    public ResponseEntity<StarredPokemon> addStarredPokemonBy(@RequestBody Map<String, Integer> payload)  {
-        return new ResponseEntity<>(starredService.addPokemonBy(payload.get("pokemonId")), HttpStatus.CREATED);
+    public ResponseEntity<StarredPokemon> addStarredPokemonBy(@RequestBody Map<String, String> payload)  {
+        return new ResponseEntity<>(starredService.addPokemonBy(Integer.valueOf(payload.get("pokemonId")), payload.get("nickname")), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{pokemonId}")
