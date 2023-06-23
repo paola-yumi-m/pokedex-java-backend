@@ -31,24 +31,41 @@ public class StarredService {
     public StarredPokemon getStarredPokemonById(Integer pokemonId) {
         StarredPokemon starredPokemon = starredRepository.findByPokemonId(pokemonId);
 
-        if (isNull(starredPokemon)) throw new PokemonNotFoundException();
+        validateIfPokemonExists(starredPokemon);
 
         return starredPokemon;
     }
 
     public StarredPokemon addPokemonBy(Integer pokemonId, String nickname) {
         Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(pokemonId);
+
+        if (pokemon.isEmpty()) {
+            throw new PokemonNotFoundException();
+        }
+
         StarredPokemon starredPokemon = new StarredPokemon(pokemon.get());
         starredPokemon.setNickname(nickname);
-
         return starredRepository.insert(starredPokemon);
     }
 
     public void deletePokemonBy(Integer pokemonId) {
+        StarredPokemon pokemon = starredRepository.findByPokemonId(pokemonId);
 
+        validateIfPokemonExists(pokemon);
+
+        starredRepository.delete(pokemon);
     }
 
     public StarredPokemon editNicknameOf(Integer pokemonId, String nickname) {
-        return null;
+        StarredPokemon pokemon = starredRepository.findByPokemonId(pokemonId);
+
+        validateIfPokemonExists(pokemon);
+
+        pokemon.setNickname(nickname);
+        return pokemon;
+    }
+
+    private void validateIfPokemonExists(StarredPokemon starredPokemon) {
+        if (isNull(starredPokemon)) throw new PokemonNotFoundException();
     }
 }

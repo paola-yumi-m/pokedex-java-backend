@@ -1,6 +1,7 @@
 package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokemon;
+import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +30,7 @@ class PokemonServiceTest {
     public void should_return_a_list_of_pokemons() {
         when(pokemonRepository.findAll()).thenReturn(List.of(aPokemonWithId(1), aPokemonWithId(2)));
 
-        List<Pokemon> pokemons = pokemonService.getAllPokemons();
+        List<Pokemon> pokemons = pokemonService.getAllPokemons(new PokemonFilter());
 
         assertThat(pokemons.size(), is(2));
         assertThat(pokemons.get(0).getPokemonId(), is(1));

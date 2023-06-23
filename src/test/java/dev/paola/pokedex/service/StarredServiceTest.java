@@ -7,6 +7,12 @@ import dev.paola.pokedex.repository.PokemonRepository;
 import dev.paola.pokedex.repository.StarredRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,20 +20,24 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 class StarredServiceTest {
     public static final String ERROR_MESSAGE_POKEMON_NOT_FOUND = "Pokémon not found!";
     private StarredService starredService;
+    @Mock
     private StarredRepository starredRepository;
-
+    @Mock
     private PokemonRepository pokemonRepository;
+    @Captor
+    private ArgumentCaptor<StarredPokemon> pokemonCaptor;
 
 
     @BeforeEach
     public void setup() {
-        starredRepository = mock(StarredRepository.class);
-        pokemonRepository = mock(PokemonRepository.class);
+        MockitoAnnotations.openMocks(this);
         starredService = new StarredService(starredRepository, pokemonRepository);
     }
     @Test
@@ -81,14 +91,61 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_pokemon_to_add_to_starred_does_not_exist() {
+        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.empty());
 
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.addPokemonBy(1, "Purple"));
+
+        assertThat(exception.getMessage(), is("Pokémon not found!"));
+    }
+
+    @Test
+    public void should_delete_pokemon_from_starred_pokemons() {
+        when(starredRepository.findByPokemonId(1)).thenReturn(aStarredPokemonWith(1));
+
+        starredService.deletePokemonBy(1);
+
+        verify(starredRepository).findByPokemonId(1);
+        verify(starredRepository).delete(pokemonCaptor.capture());
+        assertThat(pokemonCaptor.getValue().getPokemonId(), is(1));
+    }
+
+    @Test
+    public void should_throw_an_exception_when_starred_pokemon_to_delete_is_not_found() {
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> {
+            starredService.deletePokemonBy(1);
+        });
+
+        assertThat(exception.getMessage(), is("Pokémon not found!"));
+    }
+
+    @Test
+    public void should_edit_the_nickname_when_given_an_id() {
+        when(starredRepository.findByPokemonId(1)).thenReturn(aStarredPokemonWith(1, "Purple"));
+
+        StarredPokemon editedPokemon = starredService.editNicknameOf(1, "Red");
+
+        verify(starredRepository).findByPokemonId(1);
+        assertThat(editedPokemon.getPokemonId(), is(1));
+        assertThat(editedPokemon.getNickname(), is("Red"));
+    }
+
+    @Test
+    public void should_throw_an_exception_when_pokemon_to_edit_nickname_is_not_found() {
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.editNicknameOf(1, "Purple"));
+
+        assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
 
 
     private StarredPokemon aStarredPokemonWith(int pokemonId, String nickname) {
+        StarredPokemon starredPokemon = aStarredPokemonWith(pokemonId);
+        starredPokemon.setNickname(nickname);
+        return starredPokemon;
+    }
+
+    private StarredPokemon aStarredPokemonWith(int pokemonId) {
         StarredPokemon starredPokemon = new StarredPokemon();
         starredPokemon.setPokemonId(pokemonId);
-        starredPokemon.setNickname(nickname);
         return starredPokemon;
     }
 
