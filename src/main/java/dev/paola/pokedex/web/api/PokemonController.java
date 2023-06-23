@@ -1,5 +1,6 @@
 package dev.paola.pokedex.web.api;
 
+import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.service.PokemonService;
 import dev.paola.pokedex.dto.Pokemon;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
@@ -20,8 +21,8 @@ public class PokemonController {
     private PokemonService pokemonService;
 
     @GetMapping
-    public ResponseEntity<List<Pokemon>> getAllPokemons() {
-        return new ResponseEntity<>(pokemonService.getAllPokemons(), HttpStatus.OK);
+    public ResponseEntity<List<Pokemon>> getAllPokemons(@RequestParam(required = false) PokemonFilter filter) {
+        return new ResponseEntity<>(pokemonService.getAllPokemons(filter), HttpStatus.OK);
     }
 
     @GetMapping("/{pokemonId}")

@@ -1,6 +1,7 @@
 package dev.paola.pokedex.web.api;
 
 import dev.paola.pokedex.dto.Pokemon;
+import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.PokemonService;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +41,7 @@ public class PokemonControllerTest {
 
     @Test
     public void should_return_200_when_retrieves_all_pokemons() throws Exception {
-        when(pokemonService.getAllPokemons()).thenReturn(List.of(aPokemonWithId(1), aPokemonWithId(2)));
+        when(pokemonService.getAllPokemons(new PokemonFilter())).thenReturn(List.of(aPokemonWith(1), aPokemonWith(2)));
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS));
 
@@ -52,7 +53,7 @@ public class PokemonControllerTest {
 
     @Test
     public void should_return_200_when_retrieves_the_pokemon_by_its_id() throws Exception {
-        when(pokemonService.getPokemonById(1)).thenReturn(Optional.of(aPokemonWithId(1)));
+        when(pokemonService.getPokemonById(1)).thenReturn(Optional.of(aPokemonWith(1)));
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS + "/1"));
 
@@ -70,7 +71,26 @@ public class PokemonControllerTest {
         result.andExpect(content().string("Pokémon not found!"));
     }
 
-    private Pokemon aPokemonWithId(int pokemonId) {
+    @Test
+    public void should_filter_pokemons_by_name() throws Exception {
+        PokemonFilter filter = new PokemonFilter();
+        filter.setName("Pikachu");
+        when(pokemonService.getAllPokemons(filter)).thenReturn(List.of(aPokemonWith(1, "Pikachu")));
+
+        ResultActions result = mockMvc.perform(get(URL_POKEMONS).param("name", "Pikachu"));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.[0].name", is("Pikachu")));
+    }
+
+    private Pokemon aPokemonWith(int pokemonId, String pikachu) {
+        Pokemon pokemon = aPokemonWith(pokemonId);
+        pokemon.setName(pikachu);
+        return pokemon;
+    }
+
+
+    private Pokemon aPokemonWith(int pokemonId) {
         Pokemon pokemon = new Pokemon();
         pokemon.setPokemonId(pokemonId);
         return pokemon;
