@@ -1,7 +1,6 @@
 package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokemon;
-import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,12 @@ public class PokemonService {
         this.pokemonRepository = pokemonRepository;
     }
 
-    public List<Pokemon> getAllPokemons(PokemonFilter filter) {
+    public List<Pokemon> getAllPokemons() {
         return pokemonRepository.findAll();
+    }
+
+    public List<Pokemon> getPokemonsByName(String name) {
+        return pokemonRepository.findByNameRegex(name);
     }
 
     public Optional<Pokemon> getPokemonById(int pokemonId) {

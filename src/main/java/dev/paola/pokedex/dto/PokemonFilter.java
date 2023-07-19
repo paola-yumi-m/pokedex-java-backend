@@ -7,5 +7,4 @@ import lombok.Setter;
 @Setter
 public class PokemonFilter {
     private String name;
-    private String type;
 }

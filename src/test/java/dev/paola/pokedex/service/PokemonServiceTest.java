@@ -1,7 +1,6 @@
 package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokemon;
-import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import org.junit.jupiter.api.Assertions;
@@ -17,6 +16,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 class PokemonServiceTest {
+    private static final String PIKACHU = "Pikachu";
     private PokemonRepository pokemonRepository;
     private PokemonService pokemonService;
 
@@ -30,11 +30,20 @@ class PokemonServiceTest {
     public void should_return_a_list_of_pokemons() {
         when(pokemonRepository.findAll()).thenReturn(List.of(aPokemonWithId(1), aPokemonWithId(2)));
 
-        List<Pokemon> pokemons = pokemonService.getAllPokemons(new PokemonFilter());
+        List<Pokemon> pokemons = pokemonService.getAllPokemons();
 
         assertThat(pokemons.size(), is(2));
         assertThat(pokemons.get(0).getPokemonId(), is(1));
         assertThat(pokemons.get(1).getPokemonId(), is(2));
+    }
+
+    @Test
+    public void should_return_a_pokemon_by_its_name() {
+        when(pokemonRepository.findByNameRegex(PIKACHU)).thenReturn(List.of(aPikachu()));
+
+        List<Pokemon> pokemonsByName = pokemonService.getPokemonsByName(PIKACHU);
+
+        assertThat(pokemonsByName.get(0).getName(), is("Pikachu"));
     }
 
     @Test
@@ -48,7 +57,7 @@ class PokemonServiceTest {
     }
 
     @Test
-    public void should_throw_an_exception_when_pokemon_is_not_found() {
+    public void should_throw_an_exception_when_pokemon_is_not_found_by_id() {
         PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokemonService.getPokemonById(1000));
 
         assertThat(exception.getMessage(), is("Pokémon not found!"));
@@ -57,6 +66,12 @@ class PokemonServiceTest {
     private Pokemon aPokemonWithId(int pokemonId) {
         Pokemon pokemon = new Pokemon();
         pokemon.setPokemonId(pokemonId);
+        return pokemon;
+    }
+
+    private Pokemon aPikachu() {
+        Pokemon pokemon = new Pokemon();
+        pokemon.setName(PIKACHU);
         return pokemon;
     }
 }

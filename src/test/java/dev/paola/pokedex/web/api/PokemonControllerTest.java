@@ -1,7 +1,6 @@
 package dev.paola.pokedex.web.api;
 
 import dev.paola.pokedex.dto.Pokemon;
-import dev.paola.pokedex.dto.PokemonFilter;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.PokemonService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class PokemonControllerTest {
 
+    private static final String PIKACHU = "Pikachu";
     @InjectMocks
     private PokemonController pokemonController;
     @Mock
@@ -41,7 +41,7 @@ public class PokemonControllerTest {
 
     @Test
     public void should_return_200_when_retrieves_all_pokemons() throws Exception {
-        when(pokemonService.getAllPokemons(new PokemonFilter())).thenReturn(List.of(aPokemonWith(1), aPokemonWith(2)));
+        when(pokemonService.getAllPokemons()).thenReturn(List.of(aPokemonWith(1), aPokemonWith(2)));
 
         ResultActions result = mockMvc.perform(get(URL_POKEMONS));
 
@@ -73,19 +73,17 @@ public class PokemonControllerTest {
 
     @Test
     public void should_filter_pokemons_by_name() throws Exception {
-        PokemonFilter filter = new PokemonFilter();
-        filter.setName("Pikachu");
-        when(pokemonService.getAllPokemons(filter)).thenReturn(List.of(aPokemonWith(1, "Pikachu")));
+        when(pokemonService.getPokemonsByName(PIKACHU)).thenReturn(List.of(aPikachu()));
 
-        ResultActions result = mockMvc.perform(get(URL_POKEMONS).param("name", "Pikachu"));
+        ResultActions result = mockMvc.perform(get(URL_POKEMONS).param("name", PIKACHU));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.[0].name", is("Pikachu")));
     }
 
-    private Pokemon aPokemonWith(int pokemonId, String pikachu) {
-        Pokemon pokemon = aPokemonWith(pokemonId);
-        pokemon.setName(pikachu);
+    private Pokemon aPikachu() {
+        Pokemon pokemon = aPokemonWith(1);
+        pokemon.setName(PIKACHU);
         return pokemon;
     }
 

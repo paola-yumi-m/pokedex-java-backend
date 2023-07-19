@@ -38,15 +38,15 @@ public class PokedexService {
         throw new PokemonNotFoundException();
     }
 
+    public void deletePokemonBy(Integer pokemonId) {
+        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
+        pokedexRepository.delete(pokedexPokemon);
+    }
+
     private void validateIfPokemonIsAlreadyRegistered(int pokemonId) {
         Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
         if (nonNull(pokedexPokemon)) {
             throw new PokemonAlreadyRegisteredException();
         }
-    }
-
-    public void deletePokemonBy(Integer pokemonId) {
-        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
-        pokedexRepository.delete(pokedexPokemon);
     }
 }
