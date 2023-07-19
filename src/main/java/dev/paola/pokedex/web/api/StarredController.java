@@ -4,9 +4,11 @@ import dev.paola.pokedex.dto.StarredPokemon;
 import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.StarredService;
+import dev.paola.pokedex.web.api.payload.StarredPokemonPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,8 @@ public class StarredController {
     }
 
     @PostMapping
-    public ResponseEntity<StarredPokemon> addStarredPokemonBy(@RequestBody Map<String, String> payload)  {
-        return new ResponseEntity<>(starredService.addPokemonBy(Integer.valueOf(payload.get("pokemonId")), payload.get("nickname")), HttpStatus.CREATED);
+    public ResponseEntity<StarredPokemon> addStarredPokemonBy(@Validated @RequestBody StarredPokemonPayload payload)  {
+        return new ResponseEntity<>(starredService.addPokemonBy(payload), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{pokemonId}")

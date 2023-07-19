@@ -5,6 +5,7 @@ import dev.paola.pokedex.dto.StarredPokemon;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import dev.paola.pokedex.repository.StarredRepository;
+import dev.paola.pokedex.web.api.payload.StarredPokemonPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,15 +37,15 @@ public class StarredService {
         return starredPokemon;
     }
 
-    public StarredPokemon addPokemonBy(Integer pokemonId, String nickname) {
-        Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(pokemonId);
+    public StarredPokemon addPokemonBy(StarredPokemonPayload payload) {
+        Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(payload.getPokemonId());
 
         if (pokemon.isEmpty()) {
             throw new PokemonNotFoundException();
         }
 
         StarredPokemon starredPokemon = new StarredPokemon(pokemon.get());
-        starredPokemon.setNickname(nickname);
+        starredPokemon.setNickname(payload.getNickname());
         return starredRepository.insert(starredPokemon);
     }
 

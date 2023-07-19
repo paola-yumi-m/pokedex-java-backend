@@ -5,6 +5,7 @@ import dev.paola.pokedex.dto.StarredPokemon;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import dev.paola.pokedex.repository.StarredRepository;
+import dev.paola.pokedex.web.api.payload.StarredPokemonPayload;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -82,7 +83,7 @@ class StarredServiceTest {
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(pokemon));
         when(starredRepository.insert(aStarredPokemonWith(1, "Red"))).thenReturn(aStarredPokemonWith(1, "Red"));
 
-        StarredPokemon starredPokemon = starredService.addPokemonBy(1, "Red");
+        StarredPokemon starredPokemon = starredService.addPokemonBy(aPayloadWith("Red"));
 
         verify(pokemonRepository).findByPokemonId(1);
         verify(starredRepository).insert(aStarredPokemonWith(1, "Red"));
@@ -93,7 +94,8 @@ class StarredServiceTest {
     public void should_throw_an_exception_when_pokemon_to_add_to_starred_does_not_exist() {
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.empty());
 
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.addPokemonBy(1, "Purple"));
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.addPokemonBy(aPayloadWith(
+            "Purple")));
 
         assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
@@ -111,9 +113,7 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_starred_pokemon_to_delete_is_not_found() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> {
-            starredService.deletePokemonBy(1);
-        });
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.deletePokemonBy(1));
 
         assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
@@ -149,4 +149,10 @@ class StarredServiceTest {
         return starredPokemon;
     }
 
+    private StarredPokemonPayload aPayloadWith(String nickname) {
+        StarredPokemonPayload payload = new StarredPokemonPayload();
+        payload.setPokemonId(1);
+        payload.setNickname(nickname);
+        return payload;
+    }
 }
