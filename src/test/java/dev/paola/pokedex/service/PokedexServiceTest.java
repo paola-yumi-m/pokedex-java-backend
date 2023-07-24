@@ -2,6 +2,7 @@ package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokedex;
 import dev.paola.pokedex.dto.Pokemon;
+import dev.paola.pokedex.dto.PokemonPayload;
 import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokedexRepository;
@@ -42,11 +43,11 @@ class PokedexServiceTest {
 
     @Test
     public void should_add_a_pokemon_to_the_pokedex_given_a_pokemonId() {
-        Pokemon pokemon = aPokemonWithId(1);
+        Pokemon pokemon = aPokemonWithId();
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(pokemon));
         when(pokedexRepository.insert(new Pokedex(pokemon))).thenReturn(aPokedexPokemonWith(1));
 
-        Pokedex pokedex = pokedexService.addPokemon(1);
+        Pokedex pokedex = pokedexService.addPokemon(aPokemonPayload());
 
         assertThat(pokedex.getPokemonId(), is(1));
         verify(pokedexRepository).findByPokemonId(1);
@@ -55,24 +56,30 @@ class PokedexServiceTest {
 
     @Test
     public void should_throw_an_exception_when_pokemon_is_not_found() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokedexService.addPokemon(1));
+        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
 
         assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
 
     @Test
     public void should_throw_an_exception_when_pokemon_is_already_registered_in_pokedex() {
-        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWithId(1)));
+        when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWithId()));
         when(pokedexRepository.findByPokemonId(1)).thenReturn(aPokedexPokemonWith(1));
 
-        PokemonAlreadyRegisteredException exception = assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(1));
+        PokemonAlreadyRegisteredException exception = assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
 
         assertThat(exception.getMessage(), is("This pokémon is already registered here!"));
     }
 
-    private Pokemon aPokemonWithId(int pokemonId) {
+    private PokemonPayload aPokemonPayload() {
+        PokemonPayload payload = new PokemonPayload();
+        payload.setPokemonId(1);
+        return payload;
+    }
+
+    private Pokemon aPokemonWithId() {
         Pokemon pokemon = new Pokemon();
-        pokemon.setPokemonId(pokemonId);
+        pokemon.setPokemonId(1);
         return pokemon;
     }
 

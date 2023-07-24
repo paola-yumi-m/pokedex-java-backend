@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 class StarredServiceTest {
-    public static final String ERROR_MESSAGE_POKEMON_NOT_FOUND = "Pokémon not found!";
+    private static final String ERROR_MESSAGE_POKEMON_NOT_FOUND = "Pokémon not found!";
     private StarredService starredService;
     @Mock
     private StarredRepository starredRepository;

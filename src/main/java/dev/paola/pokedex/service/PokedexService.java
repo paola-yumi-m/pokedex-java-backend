@@ -2,6 +2,7 @@ package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokedex;
 import dev.paola.pokedex.dto.Pokemon;
+import dev.paola.pokedex.dto.PokemonPayload;
 import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokedexRepository;
@@ -28,11 +29,11 @@ public class PokedexService {
         return pokedexRepository.findAll();
     }
 
-    public Pokedex addPokemon(int pokemonId) {
-        Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(pokemonId);
+    public Pokedex addPokemon(PokemonPayload payload) {
+        Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(payload.getPokemonId());
 
         if (pokemon.isPresent()) {
-            validateIfPokemonIsAlreadyRegistered(pokemonId);
+            validateIfPokemonIsAlreadyRegistered(payload.getPokemonId());
             return pokedexRepository.insert(new Pokedex(pokemon.get()));
         }
         throw new PokemonNotFoundException();

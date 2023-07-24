@@ -2,7 +2,6 @@ package dev.paola.pokedex.web.api;
 
 import dev.paola.pokedex.dto.StarredPokemon;
 import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
-import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.StarredService;
 import dev.paola.pokedex.web.api.payload.StarredPokemonPayload;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1/starred")
-public class StarredController {
+public class StarredController extends BaseController {
 
     @Autowired
     private StarredService starredService;
@@ -42,15 +40,9 @@ public class StarredController {
         return new ResponseEntity<>("Pokémon deleted from your starred pokémons!", HttpStatus.OK);
     }
 
-    @PatchMapping("/{pokemonId}")
-    public ResponseEntity<StarredPokemon> editNicknameOf(@PathVariable Integer pokemonId, @RequestBody Map<String, String> payload) {
-        return new ResponseEntity<>(starredService.editNicknameOf(pokemonId, payload.get("nickname")), HttpStatus.OK);
-    }
-
-    @ExceptionHandler(PokemonNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> handlePokemonNotFoundException(PokemonNotFoundException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    @PatchMapping
+    public ResponseEntity<StarredPokemon> editNicknameOf(@RequestBody @Validated StarredPokemonPayload payload) {
+        return new ResponseEntity<>(starredService.editNicknameOf(payload.getPokemonId(), payload.getNickname()), HttpStatus.OK);
     }
 
     @ExceptionHandler(PokemonAlreadyRegisteredException.class)

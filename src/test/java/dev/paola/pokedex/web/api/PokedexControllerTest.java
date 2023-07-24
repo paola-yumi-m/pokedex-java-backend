@@ -1,6 +1,7 @@
 package dev.paola.pokedex.web.api;
 
 import dev.paola.pokedex.dto.Pokedex;
+import dev.paola.pokedex.dto.PokemonPayload;
 import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.service.PokedexService;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 
 @SpringBootTest
 class PokedexControllerTest {
-    public static final String URL_POKEDEX = "http://localhost:8080/api/v1/pokedex";
+    private static final String URL_POKEDEX = "http://localhost:8080/api/v1/pokedex";
     private MockMvc mockMvc;
     @InjectMocks
     private PokedexController pokedexController;
@@ -51,7 +52,7 @@ class PokedexControllerTest {
 
     @Test
     public void should_return_201_when_adding_a_new_pokemon_to_the_pokedex_successfully() throws Exception {
-        when(pokedexService.addPokemon(2)).thenReturn(aPokedexWithId(2));
+        when(pokedexService.addPokemon(aPokemonPayloadWithId(2))).thenReturn(aPokedexWithId(2));
 
         ResultActions result = mockMvc.perform(post(URL_POKEDEX).contentType(MediaType.APPLICATION_JSON).content("{\"pokemonId\": 2}"));
 
@@ -61,7 +62,7 @@ class PokedexControllerTest {
 
     @Test
     public void should_return_404_when_pokemon_to_add_does_not_exist() throws Exception {
-        doThrow(new PokemonNotFoundException()).when(pokedexService).addPokemon(1001);
+        doThrow(new PokemonNotFoundException()).when(pokedexService).addPokemon(aPokemonPayloadWithId(1001));
 
         ResultActions result = mockMvc.perform(post(URL_POKEDEX).contentType(MediaType.APPLICATION_JSON).content("{\"pokemonId\": 1001}"));
 
@@ -71,7 +72,7 @@ class PokedexControllerTest {
 
     @Test
     public void should_return_422_when_pokemon_is_already_in_the_pokedex() throws Exception {
-        doThrow(new PokemonAlreadyRegisteredException()).when(pokedexService).addPokemon(1);
+        doThrow(new PokemonAlreadyRegisteredException()).when(pokedexService).addPokemon(aPokemonPayloadWithId(1));
 
         ResultActions result = mockMvc.perform(post(URL_POKEDEX).contentType(MediaType.APPLICATION_JSON).content("{\"pokemonId\": 1}"));
 
@@ -96,6 +97,12 @@ class PokedexControllerTest {
 
         result.andExpect(status().isNotFound());
         result.andExpect(content().string("Pokémon not found!"));
+    }
+
+    private PokemonPayload aPokemonPayloadWithId(int pokemonId) {
+        PokemonPayload payload = new PokemonPayload();
+        payload.setPokemonId(pokemonId);
+        return payload;
     }
 
     private Pokedex aPokedexWithId(int pokemonId) {

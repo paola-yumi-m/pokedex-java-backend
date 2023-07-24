@@ -26,11 +26,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PokemonControllerTest {
 
     private static final String PIKACHU = "Pikachu";
+    private static final String URL_POKEMONS = "http://localhost:8080/api/v1/pokemons";
     @InjectMocks
     private PokemonController pokemonController;
     @Mock
     private PokemonService pokemonService;
-    private static final String URL_POKEMONS = "http://localhost:8080/api/v1/pokemons";
     private MockMvc mockMvc;
 
     @BeforeEach
