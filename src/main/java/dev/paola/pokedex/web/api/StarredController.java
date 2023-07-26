@@ -40,6 +40,12 @@ public class StarredController extends BaseController {
         return new ResponseEntity<>("Pokémon deleted from your starred pokémons!", HttpStatus.OK);
     }
 
+    @DeleteMapping
+    public ResponseEntity<String> deleteAllStarredPokemons() {
+        starredService.deleteAll();
+        return new ResponseEntity<>("All pokémons deleted from your starred pokémons!", HttpStatus.OK);
+    }
+
     @PatchMapping
     public ResponseEntity<StarredPokemon> editNicknameOf(@RequestBody @Validated StarredPokemonPayload payload) {
         return new ResponseEntity<>(starredService.editNicknameOf(payload.getPokemonId(), payload.getNickname()), HttpStatus.OK);

@@ -141,6 +141,14 @@ class StarredControllerTest {
         result.andExpect(content().string(ERROR_MESSAGE_POKEMON_NOT_FOUND));
     }
 
+    @Test
+    public void should_return_200_when_all_pokemons_are_deleted() throws Exception {
+        ResultActions result = mockMvc.perform(delete(URL_STARRED));
+
+        result.andExpect(status().isOk());
+        result.andExpect(content().string("All pokémons deleted from your starred pokémons!"));
+    }
+
     private StarredPokemon aStarredPokemonWithNickname(int pokemonId) {
         StarredPokemon pokemon = new StarredPokemon();
         pokemon.setPokemonId(pokemonId);

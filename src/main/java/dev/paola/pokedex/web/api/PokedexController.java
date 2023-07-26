@@ -25,14 +25,27 @@ public class PokedexController extends BaseController {
         return new ResponseEntity<>(pokedexService.findAll(), HttpStatus.OK);
     }
 
+    @GetMapping("/{pokemonId}")
+    @ResponseBody
+    public ResponseEntity<Pokedex> getPokemonById(@PathVariable Integer pokemonId) {
+        return new ResponseEntity<>(pokedexService.findPokedexPokemonById(pokemonId), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Pokedex> addPokemon(@RequestBody @Validated PokemonPayload payload) {
         return new ResponseEntity<>(pokedexService.addPokemon(payload), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{pokemonId}")
-    public void deletePokemon(@PathVariable Integer pokemonId) {
+    public ResponseEntity<String> deletePokemon(@PathVariable Integer pokemonId) {
         pokedexService.deletePokemonBy(pokemonId);
+        return new ResponseEntity<>("Pokémon deleted from your Pokédex!", HttpStatus.OK);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteAll() {
+        pokedexService.deleteAll();
+        return new ResponseEntity<>("All pokémons deleted from your Pokédex!", HttpStatus.OK);
     }
 
     @ExceptionHandler(PokemonAlreadyRegisteredException.class)

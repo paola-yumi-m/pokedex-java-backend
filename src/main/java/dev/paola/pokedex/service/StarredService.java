@@ -2,6 +2,7 @@ package dev.paola.pokedex.service;
 
 import dev.paola.pokedex.dto.Pokemon;
 import dev.paola.pokedex.dto.StarredPokemon;
+import dev.paola.pokedex.exception.PokemonAlreadyRegisteredException;
 import dev.paola.pokedex.exception.PokemonNotFoundException;
 import dev.paola.pokedex.repository.PokemonRepository;
 import dev.paola.pokedex.repository.StarredRepository;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.Objects.isNull;
 
 @Service
 public class StarredService {
@@ -30,43 +29,42 @@ public class StarredService {
     }
 
     public StarredPokemon getStarredPokemonById(Integer pokemonId) {
-        StarredPokemon starredPokemon = starredRepository.findByPokemonId(pokemonId);
+        Optional<StarredPokemon> starredPokemon = starredRepository.findByPokemonId(pokemonId);
 
-        validateIfPokemonExists(starredPokemon);
-
-        return starredPokemon;
+        return starredPokemon.orElseThrow(PokemonNotFoundException::new);
     }
 
     public StarredPokemon addPokemonBy(StarredPokemonPayload payload) {
+        validateIfStarredPokemonAlreadyRegistered(payload);
+
         Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(payload.getPokemonId());
+        StarredPokemon newStarredPokemon = new StarredPokemon(pokemon.orElseThrow(PokemonNotFoundException::new));
+        newStarredPokemon.setNickname(payload.getNickname());
 
-        if (pokemon.isEmpty()) {
-            throw new PokemonNotFoundException();
-        }
+        return starredRepository.insert(newStarredPokemon);
+    }
 
-        StarredPokemon starredPokemon = new StarredPokemon(pokemon.get());
-        starredPokemon.setNickname(payload.getNickname());
-        return starredRepository.insert(starredPokemon);
+    private void validateIfStarredPokemonAlreadyRegistered(StarredPokemonPayload payload) {
+        Optional<StarredPokemon> starredPokemon = starredRepository.findByPokemonId(payload.getPokemonId());
+
+        if (starredPokemon.isPresent()) throw new PokemonAlreadyRegisteredException();
     }
 
     public void deletePokemonBy(Integer pokemonId) {
-        StarredPokemon pokemon = starredRepository.findByPokemonId(pokemonId);
+        Optional<StarredPokemon> pokemon = starredRepository.findByPokemonId(pokemonId);
 
-        validateIfPokemonExists(pokemon);
-
-        starredRepository.delete(pokemon);
+        starredRepository.delete(pokemon.orElseThrow(PokemonNotFoundException::new));
     }
 
     public StarredPokemon editNicknameOf(Integer pokemonId, String nickname) {
-        StarredPokemon pokemon = starredRepository.findByPokemonId(pokemonId);
+        Optional<StarredPokemon> pokemon = starredRepository.findByPokemonId(pokemonId);
 
-        validateIfPokemonExists(pokemon);
+        pokemon.orElseThrow(PokemonNotFoundException::new).setNickname(nickname);
 
-        pokemon.setNickname(nickname);
-        return pokemon;
+        return pokemon.get();
     }
 
-    private void validateIfPokemonExists(StarredPokemon starredPokemon) {
-        if (isNull(starredPokemon)) throw new PokemonNotFoundException();
+    public void deleteAll() {
+        starredRepository.deleteAll();
     }
 }

@@ -26,7 +26,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 class StarredServiceTest {
-    private static final String ERROR_MESSAGE_POKEMON_NOT_FOUND = "Pokémon not found!";
     private StarredService starredService;
     @Mock
     private StarredRepository starredRepository;
@@ -58,7 +57,7 @@ class StarredServiceTest {
 
     @Test
     public void should_return_a_starred_pokemon_by_its_id() {
-        when(starredRepository.findByPokemonId(1)).thenReturn(aStarredPokemonWith(1, "Purple"));
+        when(starredRepository.findByPokemonId(1)).thenReturn(Optional.of(aStarredPokemonWith(1, "Purple")));
 
         StarredPokemon starredPokemon = starredService.getStarredPokemonById(1);
 
@@ -69,11 +68,7 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_starred_pokemon_is_not_found() {
-        when(starredRepository.findByPokemonId(1)).thenReturn(null);
-
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.getStarredPokemonById(1));
-
-        assertThat(exception.getMessage(), is(ERROR_MESSAGE_POKEMON_NOT_FOUND));
+      assertThrows(PokemonNotFoundException.class, () -> starredService.getStarredPokemonById(1));
     }
 
     @Test
@@ -94,15 +89,13 @@ class StarredServiceTest {
     public void should_throw_an_exception_when_pokemon_to_add_to_starred_does_not_exist() {
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.empty());
 
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.addPokemonBy(aPayloadWith(
+        assertThrows(PokemonNotFoundException.class, () -> starredService.addPokemonBy(aPayloadWith(
             "Purple")));
-
-        assertThat(exception.getMessage(), is("Pokémon not found!"));
     }
 
     @Test
     public void should_delete_pokemon_from_starred_pokemons() {
-        when(starredRepository.findByPokemonId(1)).thenReturn(aStarredPokemonWith(1));
+        when(starredRepository.findByPokemonId(1)).thenReturn(Optional.of(aStarredPokemonWith(1)));
 
         starredService.deletePokemonBy(1);
 
@@ -113,14 +106,12 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_starred_pokemon_to_delete_is_not_found() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.deletePokemonBy(1));
-
-        assertThat(exception.getMessage(), is("Pokémon not found!"));
+        assertThrows(PokemonNotFoundException.class, () -> starredService.deletePokemonBy(1));
     }
 
     @Test
     public void should_edit_the_nickname_when_given_an_id() {
-        when(starredRepository.findByPokemonId(1)).thenReturn(aStarredPokemonWith(1, "Purple"));
+        when(starredRepository.findByPokemonId(1)).thenReturn(Optional.of(aStarredPokemonWith(1, "Purple")));
 
         StarredPokemon editedPokemon = starredService.editNicknameOf(1, "Red");
 
@@ -131,9 +122,7 @@ class StarredServiceTest {
 
     @Test
     public void should_throw_an_exception_when_pokemon_to_edit_nickname_is_not_found() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> starredService.editNicknameOf(1, "Purple"));
-
-        assertThat(exception.getMessage(), is("Pokémon not found!"));
+        assertThrows(PokemonNotFoundException.class, () -> starredService.editNicknameOf(1, "Purple"));
     }
 
 

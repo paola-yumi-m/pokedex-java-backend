@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.nonNull;
-
 @Service
 public class PokedexService {
 
@@ -29,25 +27,34 @@ public class PokedexService {
         return pokedexRepository.findAll();
     }
 
+    public Pokedex findPokedexPokemonById(Integer pokemonId) {
+        Optional<Pokedex> pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
+
+        return pokedexPokemon.orElseThrow(PokemonNotFoundException::new);
+    }
+
     public Pokedex addPokemon(PokemonPayload payload) {
         Optional<Pokemon> pokemon = pokemonRepository.findByPokemonId(payload.getPokemonId());
 
-        if (pokemon.isPresent()) {
             validateIfPokemonIsAlreadyRegistered(payload.getPokemonId());
-            return pokedexRepository.insert(new Pokedex(pokemon.get()));
-        }
-        throw new PokemonNotFoundException();
+            return pokedexRepository.insert(new Pokedex(pokemon.orElseThrow(PokemonNotFoundException::new)));
     }
 
     public void deletePokemonBy(Integer pokemonId) {
-        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
-        pokedexRepository.delete(pokedexPokemon);
+        Optional<Pokedex> pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
+
+        pokedexRepository.delete(pokedexPokemon.orElseThrow(PokemonNotFoundException::new));
     }
 
     private void validateIfPokemonIsAlreadyRegistered(int pokemonId) {
-        Pokedex pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
-        if (nonNull(pokedexPokemon)) {
+        Optional<Pokedex> pokedexPokemon = pokedexRepository.findByPokemonId(pokemonId);
+
+        if (pokedexPokemon.isPresent()) {
             throw new PokemonAlreadyRegisteredException();
         }
+    }
+
+    public void deleteAll() {
+        pokedexRepository.deleteAll();
     }
 }

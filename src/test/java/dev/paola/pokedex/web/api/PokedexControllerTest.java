@@ -51,6 +51,16 @@ class PokedexControllerTest {
     }
 
     @Test
+    public void should_return_200_when_retrieves_all_pokemon_from_the_pokedex_by_id() throws Exception {
+        when(pokedexService.findPokedexPokemonById(1)).thenReturn(aPokedexWithId(1));
+
+        ResultActions result = mockMvc.perform(get(URL_POKEDEX + "/1"));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.pokemonId", is(1)));
+    }
+
+    @Test
     public void should_return_201_when_adding_a_new_pokemon_to_the_pokedex_successfully() throws Exception {
         when(pokedexService.addPokemon(aPokemonPayloadWithId(2))).thenReturn(aPokedexWithId(2));
 
@@ -82,11 +92,18 @@ class PokedexControllerTest {
 
     @Test
     public void should_return_200_when_pokemon_is_successfully_deleted_from_pokedex() throws Exception {
-        doNothing().when(pokedexService).deletePokemonBy(1);
-
         ResultActions result = mockMvc.perform(delete(URL_POKEDEX + "/1"));
 
         result.andExpect(status().isOk());
+        result.andExpect(content().string("Pokémon deleted from your Pokédex!"));
+    }
+
+    @Test
+    public void should_return_200_when_all_pokemons_are_successfully_deleted_from_pokedex() throws Exception {
+        ResultActions result = mockMvc.perform(delete(URL_POKEDEX));
+
+        result.andExpect(status().isOk());
+        result.andExpect(content().string("All pokémons deleted from your Pokédex!"));
     }
 
     @Test

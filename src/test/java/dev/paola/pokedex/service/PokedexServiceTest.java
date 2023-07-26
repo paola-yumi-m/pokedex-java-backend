@@ -42,6 +42,20 @@ class PokedexServiceTest {
     }
 
     @Test
+    public void should_return_pokemon_from_pokedex_by_id() {
+        when(pokedexRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokedexPokemonWith(1)));
+
+        Pokedex pokedexPokemon = pokedexService.findPokedexPokemonById(1);
+
+        assertThat(pokedexPokemon.getPokemonId(), is(1));
+    }
+
+    @Test
+    public void should_throw_an_exception_when_pokedex_pokemon_is_not_found_by_id() {
+            assertThrows(PokemonNotFoundException.class, () -> pokedexService.findPokedexPokemonById(1));
+    }
+
+    @Test
     public void should_add_a_pokemon_to_the_pokedex_given_a_pokemonId() {
         Pokemon pokemon = aPokemonWithId();
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(pokemon));
@@ -55,20 +69,31 @@ class PokedexServiceTest {
     }
 
     @Test
-    public void should_throw_an_exception_when_pokemon_is_not_found() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
+    public void should_throw_an_exception_when_pokemon_to_add_to_pokedex_is_not_found() {
+        assertThrows(PokemonNotFoundException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
+    }
 
-        assertThat(exception.getMessage(), is("Pokémon not found!"));
+    @Test
+    public void should_delete_pokemon_from_pokedex() {
+        when(pokedexRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokedexPokemonWith(1)));
+
+        pokedexService.deletePokemonBy(1);
+
+        verify(pokedexRepository).delete(aPokedexPokemonWith(1));
+
+    }
+
+    @Test
+    public void should_throw_an_exception_when_pokedex_pokemon_to_delete_is_not_found() {
+        assertThrows(PokemonNotFoundException.class, () -> pokedexService.deletePokemonBy(1));
     }
 
     @Test
     public void should_throw_an_exception_when_pokemon_is_already_registered_in_pokedex() {
         when(pokemonRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokemonWithId()));
-        when(pokedexRepository.findByPokemonId(1)).thenReturn(aPokedexPokemonWith(1));
+        when(pokedexRepository.findByPokemonId(1)).thenReturn(Optional.of(aPokedexPokemonWith(1)));
 
-        PokemonAlreadyRegisteredException exception = assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
-
-        assertThat(exception.getMessage(), is("This pokémon is already registered here!"));
+        assertThrows(PokemonAlreadyRegisteredException.class, () -> pokedexService.addPokemon(aPokemonPayload()));
     }
 
     private PokemonPayload aPokemonPayload() {

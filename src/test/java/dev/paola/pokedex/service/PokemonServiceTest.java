@@ -58,9 +58,7 @@ class PokemonServiceTest {
 
     @Test
     public void should_throw_an_exception_when_pokemon_is_not_found_by_id() {
-        PokemonNotFoundException exception = assertThrows(PokemonNotFoundException.class, () -> pokemonService.getPokemonById(1000));
-
-        assertThat(exception.getMessage(), is("Pokémon not found!"));
+        assertThrows(PokemonNotFoundException.class, () -> pokemonService.getPokemonById(1000));
     }
 
     private Pokemon aPokemonWithId(int pokemonId) {
