@@ -116,6 +116,7 @@ class StarredServiceTest {
         StarredPokemon editedPokemon = starredService.editNicknameOf(1, "Red");
 
         verify(starredRepository).findByPokemonId(1);
+        verify(starredRepository).save(aStarredPokemonWith(1, "Red"));
         assertThat(editedPokemon.getPokemonId(), is(1));
         assertThat(editedPokemon.getNickname(), is("Red"));
     }

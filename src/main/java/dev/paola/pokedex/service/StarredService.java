@@ -60,6 +60,7 @@ public class StarredService {
         Optional<StarredPokemon> pokemon = starredRepository.findByPokemonId(pokemonId);
 
         pokemon.orElseThrow(PokemonNotFoundException::new).setNickname(nickname);
+        starredRepository.save(pokemon.get());
 
         return pokemon.get();
     }
