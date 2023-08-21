@@ -1,70 +1,40 @@
 openapi: 3.0.0
 info:
-  title: Pokédex
-  description: Endpoints available for the Pokédex API
+  title: Pokémon
+  description: Endpoints available for the Pokémon API
   version: '1.0'
 servers:
   - url:  'http://localhost:8080/api'
 
 
 paths: 
-  /v1/pokedex: 
+  /v1/pokemons: 
     get: 
       tags:
         - Get all
-      summary: List all pokémons from the Pokédex
-                
+      summary: List all pokémons 
+      parameters:
+        - in: query
+          name: name
+          description: pokémon name
+          schema:
+            type: string
+                  
       responses:
         '200':
           description: pokémons retrieved.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pokedexPokemons'
-        '400':
-          description: bad request.
-    post:
-      tags:
-        - Add pokémon 
-      summary: Add new pokémon to Pokédex
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                pokemonId:
-                  type: integer
-                  example: 1
-                  description: id of pokémon to add to Pokédex
-      responses:
-        '201':
-          description: pokémon added to Pokédex.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/pokedexPokemon'
-        '400':
-          description: bad request.
-        '422':
-          description: pokémon already in the Pokédex.
-        '404':
-          description: pokémon not found by id.
-    delete:
-      tags:
-        - Delete all 
-      summary: Delete all pokémons from Pokédex
-      responses:
-        '200':
-          description: all pokémons deleted from the Pokédex.
+                $ref: '#/components/schemas/pokemons'
         '400':
           description: bad request.
           
-  /v1/pokedex/{pokemonId}:
+  /v1/pokemons/{pokemonId}:
     get:
       tags: 
         - Get pokémon by id
-      summary: Get a Pokédex pokémon by its id
+      summary: Get a pokémon by its id
       parameters:
         - name: pokemonId
           in: path
@@ -79,25 +49,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pokedexPokemon'
-        '400':
-          description: bad request.
-        '404':
-          description: pokémon not found by id.
-    delete:
-      tags:
-        - Delete pokémon by id
-      summary: Delete a pokémon from the Pokédex by its id
-      parameters:
-        - name: pokemonId
-          in: path
-          description: pokémon id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: pokémon deleted
+                $ref: '#/components/schemas/pokemon'
         '400':
           description: bad request.
         '404':
@@ -105,7 +57,7 @@ paths:
     
 components:
   schemas:
-    pokedexPokemon:
+    pokemon:
       type: object
       properties:
         id:
@@ -171,14 +123,10 @@ components:
                       type: string
                       example: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"
                       description: icon link
-        nickname:
-          type: string
-          example: "Green"
-          description: nickname
-    pokedexPokemons:
+    pokemons:
       type: array
       items:
-        $ref: '#/components/schemas/pokedexPokemon'
+        $ref: '#/components/schemas/pokemon'
             
           
           

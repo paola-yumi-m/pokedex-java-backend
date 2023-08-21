@@ -1,32 +1,33 @@
 openapi: 3.0.0
 info:
-  title: Pokédex
-  description: Endpoints available for the Pokédex API
+  title: Starred Pokémons
+  description: Endpoints available for the Starred Pokémons API
   version: '1.0'
 servers:
   - url:  'http://localhost:8080/api'
 
 
 paths: 
-  /v1/pokedex: 
+  /v1/starred: 
     get: 
       tags:
         - Get all
-      summary: List all pokémons from the Pokédex
-                
+      summary: List all starred pokémons 
+                  
       responses:
         '200':
-          description: pokémons retrieved.
+          description: starred pokémons retrieved.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pokedexPokemons'
+                $ref: '#/components/schemas/starredPokemons'
         '400':
           description: bad request.
+    
     post:
       tags:
-        - Add pokémon 
-      summary: Add new pokémon to Pokédex
+        - Add starred pokémon
+      summary: Add a pokémon to starred pokémons
       requestBody:
         content:
           application/json:
@@ -36,35 +37,71 @@ paths:
                 pokemonId:
                   type: integer
                   example: 1
-                  description: id of pokémon to add to Pokédex
+                  description: id of pokémon to add to starred
+                nickname:
+                  type: string
+                  example: Red
+                  description: nickname of pokémon to add to starred
       responses:
         '201':
-          description: pokémon added to Pokédex.
+          description: pokémon added to starred.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pokedexPokemon'
+                $ref: '#/components/schemas/starredPokemon'
         '400':
           description: bad request.
         '422':
-          description: pokémon already in the Pokédex.
+          description: pokémon already in the starred collection.
         '404':
           description: pokémon not found by id.
+    
     delete:
       tags:
         - Delete all 
-      summary: Delete all pokémons from Pokédex
+      summary: Delete all pokémons from starred pokémons
       responses:
         '200':
-          description: all pokémons deleted from the Pokédex.
+          description: all pokémons deleted from starred pokémons.
         '400':
           description: bad request.
           
-  /v1/pokedex/{pokemonId}:
+    patch:
+      tags:
+        - Edit nickname
+      summary: Edit nickname of starred pokémon
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pokemonId:
+                  type: integer
+                  example: 1
+                  description: id of pokémon to edit
+                nickname:
+                  type: string
+                  example: Red
+                  description: nickname of pokémon to edit
+      responses:
+        '200':
+            description: pokémon nickname edited.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/starredPokemon'
+        '400':
+          description: bad request.
+        '404':
+          description: starred pokémon not found by id.
+      
+          
+  /v1/starred/{pokemonId}:
     get:
       tags: 
-        - Get pokémon by id
-      summary: Get a Pokédex pokémon by its id
+        - Get starred pokémon
+      summary: Get a starred pokémon by its id
       parameters:
         - name: pokemonId
           in: path
@@ -75,19 +112,20 @@ paths:
       
       responses:
         '200':
-          description: pokémon retrieved.
+          description: starred pokémon retrieved.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/pokedexPokemon'
+                $ref: '#/components/schemas/starredPokemon'
         '400':
           description: bad request.
         '404':
-          description: pokémon not found by id.
+          description: starred pokémon not found by id.
+          
     delete:
       tags:
-        - Delete pokémon by id
-      summary: Delete a pokémon from the Pokédex by its id
+        - Delete starred pokémon
+      summary: Delete a pokémon from the starred pokémons by its id
       parameters:
         - name: pokemonId
           in: path
@@ -97,15 +135,16 @@ paths:
             type: integer
       responses:
         '200':
-          description: pokémon deleted
+          description: pokémon deleted from starred pokémons.
         '400':
           description: bad request.
         '404':
-          description: pokémon not found by id.
+          description: starred pokémon not found by id.
+          
     
 components:
   schemas:
-    pokedexPokemon:
+    starredPokemon:
       type: object
       properties:
         id:
@@ -171,14 +210,10 @@ components:
                       type: string
                       example: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"
                       description: icon link
-        nickname:
-          type: string
-          example: "Green"
-          description: nickname
-    pokedexPokemons:
+    starredPokemons:
       type: array
       items:
-        $ref: '#/components/schemas/pokedexPokemon'
+        $ref: '#/components/schemas/starredPokemon'
             
           
           
