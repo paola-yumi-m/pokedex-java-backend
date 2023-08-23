@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Pokémon
-  description: Endpoints available for the Pokémon API
+  title: Pokémons
+  description: Endpoints available for the Pokémons API
   version: '1.0'
 servers:
   - url:  'http://localhost:8080/api'
