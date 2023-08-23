@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Starred Pokémons
-  description: Endpoints available for the Starred Pokémons API
+  title: Starred
+  description: Endpoints available for the Starred API
   version: '1.0'
 servers:
   - url:  'http://localhost:8080/api'
@@ -210,6 +210,10 @@ components:
                       type: string
                       example: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"
                       description: icon link
+        nickname:
+          type: string
+          example: "Green"
+          description: nickname
     starredPokemons:
       type: array
       items:

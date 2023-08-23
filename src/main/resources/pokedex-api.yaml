@@ -63,7 +63,7 @@ paths:
   /v1/pokedex/{pokemonId}:
     get:
       tags: 
-        - Get pokémon by id
+        - Get Pokédex pokémon
       summary: Get a Pokédex pokémon by its id
       parameters:
         - name: pokemonId
@@ -97,7 +97,7 @@ paths:
             type: integer
       responses:
         '200':
-          description: pokémon deleted
+          description: pokémon deleted.
         '400':
           description: bad request.
         '404':
@@ -171,10 +171,6 @@ components:
                       type: string
                       example: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/2.png"
                       description: icon link
-        nickname:
-          type: string
-          example: "Green"
-          description: nickname
     pokedexPokemons:
       type: array
       items:

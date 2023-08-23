@@ -33,7 +33,7 @@ paths:
   /v1/pokemons/{pokemonId}:
     get:
       tags: 
-        - Get pokémon by id
+        - Get pokémon
       summary: Get a pokémon by its id
       parameters:
         - name: pokemonId
